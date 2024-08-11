@@ -18,5 +18,5 @@ public class SaidasService {
     public List<Saidas> getAllSaidas() {
         return saidasRepository.findAll();
     }
-    
+
 }

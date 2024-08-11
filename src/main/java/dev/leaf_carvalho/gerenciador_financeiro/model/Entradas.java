@@ -2,9 +2,19 @@ package dev.leaf_carvalho.gerenciador_financeiro.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "entradas")
 public class Entradas {
@@ -13,9 +23,16 @@ public class Entradas {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_entrada")
     private Long idEntrada;
+    
+    @CreatedDate
+    private LocalDateTime createdAt;
 
-    @Column(name = "id_usuario", nullable = false)
-    private Integer idUsuario;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+    
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuarios usuario;
 
     @Column(name = "salario", nullable = false)
     private BigDecimal salario;

@@ -1,10 +1,9 @@
 package dev.leaf_carvalho.gerenciador_financeiro.service;
 
+import java.util.List;
+import org.springframework.stereotype.Service;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Usuarios;
 import dev.leaf_carvalho.gerenciador_financeiro.repository.UsuariosRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UsuariosService {
@@ -15,19 +14,7 @@ public class UsuariosService {
         this.usuariosRepository = usuariosRepository;
     }
 
-    public List<Usuarios> getAllUsuarios() {
+    public List<Usuarios> getAllSaidas() {
         return usuariosRepository.findAll();
     }
-    
-	public Usuarios getUsuario(Long idUsuario) {
-        return usuariosRepository.findById(idUsuario).orElse(null);
-	}
-
-	public void addUsuarios(Usuarios usuarios) {
-		usuariosRepository.save(usuarios);
-	}
-	
-	public void deleteUsuario(Long idUsuario) {
-		usuariosRepository.deleteById(idUsuario);
-	}
 }

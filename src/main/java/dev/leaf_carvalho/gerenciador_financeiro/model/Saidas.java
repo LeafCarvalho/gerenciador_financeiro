@@ -1,8 +1,19 @@
 package dev.leaf_carvalho.gerenciador_financeiro.model;
 
 import java.time.LocalDate;
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "saidas")
 public class Saidas {
@@ -12,8 +23,15 @@ public class Saidas {
     @Column(name = "id_saida")
     private Long idSaida;
 
-    @Column(name = "id_usuario", nullable = false)
-    private Integer idUsuario;
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+    
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuarios usuario;
 
     @Column(name = "nome_saida", nullable = false)
     private String nomeSaida;

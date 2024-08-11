@@ -2,8 +2,19 @@ package dev.leaf_carvalho.gerenciador_financeiro.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "investimentos")
 public class Investimentos {
@@ -13,8 +24,15 @@ public class Investimentos {
     @Column(name = "id_investimento")
     private Long idInvestimento;
 
-    @Column(name = "id_usuario", nullable = false)
-    private Integer idUsuario;
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+    
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuarios usuario;
 
     @Column(name = "nome_investimento", nullable = false)
     private String nomeInvestimento;

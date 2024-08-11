@@ -1,81 +1,52 @@
 package dev.leaf_carvalho.gerenciador_financeiro.model;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "usuarios")
 public class Usuarios {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario")
-    private Long idUsuario;
+    @Column(name = "id")
+    private Long id;
+    
+    @CreatedDate
+    private LocalDateTime createdAt;
 
-    @Column(name = "nome_completo", nullable = false)
-    private String nomeCompleto;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+    
+    @Enumerated(EnumType.STRING)
+    private Roles role;
 
-    @Column(name = "cpf", nullable = false, unique = true, length = 14)
-    private String cpf;
-
-    @Column(name = "data_nascimento", nullable = false)
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private LocalDate dataNascimento;
-
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+    
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "senha", nullable = false)
     private String senha;
+    
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<Saidas> saidas;
 
-    public Long getIdUsuario() {
-        return idUsuario;
-    }
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<Investimentos> investimentos;
 
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public String getNomeCompleto() {
-        return nomeCompleto;
-    }
-
-    public void setNomeCompleto(String nomeCompleto) {
-        this.nomeCompleto = nomeCompleto;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<Entradas> entradas;
 }
