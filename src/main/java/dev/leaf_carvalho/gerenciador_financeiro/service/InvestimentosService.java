@@ -18,5 +18,17 @@ public class InvestimentosService {
     public List<Investimentos> getAllInvestimentos() {
         return investimentosRepository.findAll();
     }
+    
+    public Investimentos getInvestimentosById(Long id) {
+    	return investimentosRepository.findById(id).orElseThrow();
+    }
+    
+	public Investimentos saveInvestimentos(Investimentos investimentos) {
+		return investimentosRepository.save(investimentos);
+	}
+	
+	public void deleteInvestimentos(Long id) {
+		investimentosRepository.deleteById(id);
+	}
 
 }

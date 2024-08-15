@@ -21,7 +21,7 @@ public class Investimentos {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_investimento")
+    @Column(name = "id")
     private Long idInvestimento;
 
     @CreatedDate

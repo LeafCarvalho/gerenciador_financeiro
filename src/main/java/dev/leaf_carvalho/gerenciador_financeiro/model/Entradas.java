@@ -21,7 +21,7 @@ public class Entradas {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_entrada")
+    @Column(name = "id")
     private Long idEntrada;
     
     @CreatedDate

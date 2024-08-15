@@ -18,5 +18,17 @@ public class EntradasService {
     public List<Entradas> getAllEntradas() {
         return entradasRepository.findAll();
     }
+    
+    public void getEntrada(Long id) {
+    	entradasRepository.findById(id);
+    }
+    
+	public void saveEntrada(Entradas entrada) {
+		entradasRepository.save(entrada);
+	}
+	
+	public void deleteEntrada(Long id) {
+		entradasRepository.deleteById(id);
+	}
 
 }

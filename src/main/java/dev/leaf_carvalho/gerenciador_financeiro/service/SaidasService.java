@@ -18,5 +18,17 @@ public class SaidasService {
     public List<Saidas> getAllSaidas() {
         return saidasRepository.findAll();
     }
+    
+    public Saidas getById(Long id) {
+    	return saidasRepository.findById(id).orElse(null);
+    }
+    
+	public Saidas save(Saidas saida) {
+		return saidasRepository.save(saida);
+	}
+	
+	public void deleteById(Long id) {
+		saidasRepository.deleteById(id);
+	}
 
 }

@@ -27,5 +27,20 @@ public class SaidasController {
     public List<Saidas> getAllSaidas() {
         return saidasService.getAllSaidas();
     }
+    
+    @GetMapping("/{idSaida}")
+	public Saidas getById(@PathVariable("idSaida") Long id) {
+		return saidasService.getById(id);
+	}
+    
+    @PostMapping
+    public Saidas save(@RequestBody Saidas saida) {
+        return saidasService.save(saida);
+    }
+    
+    @DeleteMapping("/{idSaida}")
+        public void deleteById(@PathVariable("idSaida") Long id) {
+            saidasService.deleteById(id);
+    }
 
 }
