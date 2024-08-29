@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class SecurityConfig {
 
+	@SuppressWarnings("unused")
     @Autowired
     private CustomUserDetailsService userDetailsService;
 

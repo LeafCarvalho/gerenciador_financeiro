@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,8 +31,9 @@ public class Saidas {
     @LastModifiedDate
     private LocalDateTime updatedAt;
     
-    @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
     private Usuarios usuario;
 
     @Column(name = "nome_saida", nullable = false)

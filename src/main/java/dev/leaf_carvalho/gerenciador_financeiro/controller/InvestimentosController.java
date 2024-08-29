@@ -1,8 +1,10 @@
 package dev.leaf_carvalho.gerenciador_financeiro.controller;
 
+import dev.leaf_carvalho.gerenciador_financeiro.dto.InvestimentosDTO;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Investimentos;
 import dev.leaf_carvalho.gerenciador_financeiro.service.InvestimentosService;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,8 +36,9 @@ public class InvestimentosController {
 	}
     
     @PostMapping
-    public Investimentos saveInvestimentos(@RequestBody Investimentos investimentos) {
-        return investimentosService.saveInvestimentos(investimentos);
+    public ResponseEntity<Investimentos> saveInvestimentos(@RequestBody InvestimentosDTO investimentosDTO) {
+        Investimentos newInvestimento = investimentosService.saveInvestimentos(investimentosDTO);
+        return ResponseEntity.status(201).body(newInvestimento);
     }
     
     @DeleteMapping("/{idInvestimento}")

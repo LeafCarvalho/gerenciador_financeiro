@@ -1,8 +1,10 @@
 package dev.leaf_carvalho.gerenciador_financeiro.controller;
 
+import dev.leaf_carvalho.gerenciador_financeiro.dto.EntradasDTO;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Entradas;
 import dev.leaf_carvalho.gerenciador_financeiro.service.EntradasService;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,9 +36,10 @@ public class EntradasController {
 	}
 	
     @PostMapping
-	public void saveEntrada(@RequestBody Entradas entrada) {
-		entradasService.saveEntrada(entrada);
-	}
+    public ResponseEntity<Entradas> saveEntrada(@RequestBody EntradasDTO entradaDTO) {
+        Entradas newEntrada = entradasService.saveEntrada(entradaDTO);
+        return ResponseEntity.status(201).body(newEntrada);
+    }
 	
     @DeleteMapping("/{idEntrada}")
 	public void deleteEntrada(@PathVariable("idEntrada") Long id) {
