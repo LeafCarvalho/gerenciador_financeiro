@@ -1,6 +1,5 @@
 package dev.leaf_carvalho.gerenciador_financeiro.model;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -34,5 +33,5 @@ public class Tipo_Recorrencia {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private BigDecimal tipoRecorrencia;
+    private String tipoRecorrencia;
 }
