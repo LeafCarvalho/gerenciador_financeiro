@@ -7,20 +7,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ForbiddenException extends RuntimeException {
 
     /**
-     * Construtor padrão que aceita uma mensagem personalizada.
-     *
-     * @param message a mensagem de erro que será exibida quando a exceção for lançada.
-     */
-    public ForbiddenException(String message) {
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ForbiddenException(String message) {
         super(message);
     }
 
-    /**
-     * Construtor que aceita uma mensagem personalizada e uma causa.
-     *
-     * @param message a mensagem de erro que será exibida quando a exceção for lançada.
-     * @param cause a causa da exceção, que pode ser outra exceção.
-     */
     public ForbiddenException(String message, Throwable cause) {
         super(message, cause);
     }

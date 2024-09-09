@@ -2,6 +2,7 @@ package dev.leaf_carvalho.gerenciador_financeiro.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -22,8 +23,7 @@ public class Saidas {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long idSaida;
+    private Long id;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -42,8 +42,9 @@ public class Saidas {
     @Column(name = "tipo_saida", nullable = false)
     private String tipoSaida;
     
-    @Column(name = "recorrencia_saida", nullable = false)
-    private String recorrenciaSaida;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_recorrencia")
+    private Tipo_Recorrencia tipoRecorrencia;
     
     @Column(name = "valor_saida", nullable = false)
     private Double valorSaida;
@@ -56,4 +57,27 @@ public class Saidas {
 
     @Column(name = "recibo_saida", nullable = false)
     private String reciboSaida;
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Saidas other = (Saidas) obj;
+		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public String toString() {
+		return "Saidas [id=" + id + "]";
+	}
+    
 }

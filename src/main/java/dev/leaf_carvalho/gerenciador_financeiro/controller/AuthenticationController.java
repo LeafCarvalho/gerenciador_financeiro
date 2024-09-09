@@ -1,6 +1,5 @@
 package dev.leaf_carvalho.gerenciador_financeiro.controller;
 
-import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,38 +18,37 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
+
     private final UsuariosRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginRequestDTO body){
-        Usuarios user = this.repository.findByEmail(body.email()).orElseThrow(() -> new RuntimeException("User not found"));
-        if(passwordEncoder.matches(body.senha(), user.getSenha())) {
-            String token = this.tokenService.generateToken(user);
+    public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body) {
+        Usuarios user = repository.findByEmail(body.email())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (passwordEncoder.matches(body.senha(), user.getSenha())) {
+            String token = tokenService.generateToken(user);
             return ResponseEntity.ok(new ResponseDTO(user.getUsername(), token));
         }
         return ResponseEntity.badRequest().build();
     }
 
-
-
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody RegisterRequestDTO body){
-        Optional<Usuarios> user = this.repository.findByEmail(body.email());
-
-        if(user.isEmpty()) {
-            Usuarios newUser = new Usuarios();
-            newUser.setSenha(passwordEncoder.encode(body.senha()));
-            newUser.setEmail(body.email());
-            newUser.setUsername(body.username());
-            newUser.setRole(body.role());
-            this.repository.save(newUser);
-
-            String token = this.tokenService.generateToken(newUser);
-            return ResponseEntity.ok(new ResponseDTO(newUser.getUsername(), token));
+    public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequestDTO body) {
+        if (repository.findByEmail(body.email()).isPresent()) {
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.badRequest().build();
-    }
 
+        Usuarios newUser = new Usuarios();
+        newUser.setSenha(passwordEncoder.encode(body.senha()));
+        newUser.setEmail(body.email());
+        newUser.setUsername(body.username());
+        newUser.setRole(body.role());
+        repository.save(newUser);
+
+        String token = tokenService.generateToken(newUser);
+        return ResponseEntity.ok(new ResponseDTO(newUser.getUsername(), token));
+    }
 }

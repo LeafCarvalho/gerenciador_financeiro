@@ -3,6 +3,7 @@ package dev.leaf_carvalho.gerenciador_financeiro.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -20,21 +21,21 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "entradas")
 public class Entradas {
-	
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long idEntrada;
-    
+
     @CreatedDate
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
-    
-    @JsonBackReference
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
+    @JsonBackReference
     private Usuarios usuario;
 
     @Column(name = "salario", nullable = false)
@@ -42,13 +43,14 @@ public class Entradas {
 
     @Column(name = "nome_entrada", nullable = false)
     private String nomeEntrada;
-    
+
     @Column(name = "tipo_entrada", nullable = false)
     private String tipoEntrada;
-    
-    @Column(name = "recorrencia_entrada", nullable = false)
-    private String recorrenciaEntrada;
-    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_recorrencia")
+    private Tipo_Recorrencia tipoRecorrencia;
+
     @Column(name = "valor_entrada", nullable = false)
     private Double valorEntrada;
 
@@ -57,4 +59,32 @@ public class Entradas {
 
     @Column(name = "recibo_entrada", nullable = false)
     private String reciboEntrada;
+
+    public void setUsuario(Usuarios usuario) {
+        this.usuario = usuario;
+    }
+    
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Entradas entrada = (Entradas) o;
+        return Objects.equals(idEntrada, entrada.idEntrada);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idEntrada);
+    }
 }

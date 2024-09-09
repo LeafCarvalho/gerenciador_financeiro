@@ -1,17 +1,11 @@
 package dev.leaf_carvalho.gerenciador_financeiro.controller;
 
 import dev.leaf_carvalho.gerenciador_financeiro.dto.EntradasDTO;
-import dev.leaf_carvalho.gerenciador_financeiro.model.Entradas;
+import dev.leaf_carvalho.gerenciador_financeiro.model.Usuarios;
 import dev.leaf_carvalho.gerenciador_financeiro.service.EntradasService;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,24 +20,28 @@ public class EntradasController {
     }
 
     @GetMapping
-    public List<Entradas> getAllEntradas() {
-        return entradasService.getAllEntradas();
+    public List<EntradasDTO> getAllEntradas(Authentication authentication) {
+        Usuarios usuario = (Usuarios) authentication.getPrincipal();
+        Long usuarioId = usuario.getId();
+        return entradasService.getAllEntradasByUsuarioId(usuarioId);
     }
-    
+
     @GetMapping("/{idEntrada}")
-	public void getEntrada(@PathVariable("idEntrada") Long id) {
-		entradasService.getEntrada(id);
-	}
-	
+    public ResponseEntity<EntradasDTO> getEntrada(@PathVariable Long idEntrada) {
+        EntradasDTO entrada = entradasService.getEntrada(idEntrada);
+        return ResponseEntity.ok(entrada);
+    }
+
     @PostMapping
-    public ResponseEntity<Entradas> saveEntrada(@RequestBody EntradasDTO entradaDTO) {
-        Entradas newEntrada = entradasService.saveEntrada(entradaDTO);
+    public ResponseEntity<EntradasDTO> saveEntrada(@RequestBody EntradasDTO entradaDTO, Authentication authentication) {
+        Usuarios usuario = (Usuarios) authentication.getPrincipal();
+        Long usuarioId = usuario.getId();
+        EntradasDTO newEntrada = entradasService.saveEntrada(entradaDTO, usuarioId);
         return ResponseEntity.status(201).body(newEntrada);
     }
-	
-    @DeleteMapping("/{idEntrada}")
-	public void deleteEntrada(@PathVariable("idEntrada") Long id) {
-		entradasService.deleteEntrada(id);
-	}
 
+    @DeleteMapping("/{idEntrada}")
+    public void deleteEntrada(@PathVariable("idEntrada") Long id) {
+        entradasService.deleteEntrada(id);
+    }
 }

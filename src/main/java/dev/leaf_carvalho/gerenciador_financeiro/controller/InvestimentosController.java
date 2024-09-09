@@ -1,17 +1,12 @@
 package dev.leaf_carvalho.gerenciador_financeiro.controller;
 
 import dev.leaf_carvalho.gerenciador_financeiro.dto.InvestimentosDTO;
-import dev.leaf_carvalho.gerenciador_financeiro.model.Investimentos;
+import dev.leaf_carvalho.gerenciador_financeiro.model.Usuarios;
 import dev.leaf_carvalho.gerenciador_financeiro.service.InvestimentosService;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,24 +21,28 @@ public class InvestimentosController {
     }
 
     @GetMapping
-    public List<Investimentos> getAllInvestimentos() {
-        return investimentosService.getAllInvestimentos();
+    public List<InvestimentosDTO> getAllInvestimentos(Authentication authentication) {
+        Usuarios usuario = (Usuarios) authentication.getPrincipal();
+        Long usuarioId = usuario.getId();
+        return investimentosService.getAllInvestimentosByUsuarioId(usuarioId);
     }
     
     @GetMapping("/{idInvestimento}")
-	public Investimentos getInvestimentosById(@PathVariable("idInvestimento") Long id) {
-		return investimentosService.getInvestimentosById(id);
-	}
-    
+    public ResponseEntity<InvestimentosDTO> getInvestimentoById(@PathVariable("idInvestimento") Long idInvestimento) {
+        InvestimentosDTO investimento = investimentosService.getInvestimentoById(idInvestimento);
+        return ResponseEntity.ok(investimento);
+    }
+
     @PostMapping
-    public ResponseEntity<Investimentos> saveInvestimentos(@RequestBody InvestimentosDTO investimentosDTO) {
-        Investimentos newInvestimento = investimentosService.saveInvestimentos(investimentosDTO);
+    public ResponseEntity<InvestimentosDTO> saveInvestimento(@RequestBody InvestimentosDTO investimentosDTO, Authentication authentication) {
+        Long usuarioId = ((Usuarios) authentication.getPrincipal()).getId();
+        InvestimentosDTO newInvestimento = investimentosService.saveInvestimento(investimentosDTO, usuarioId);
         return ResponseEntity.status(201).body(newInvestimento);
     }
     
     @DeleteMapping("/{idInvestimento}")
-    public void deleteInvestimentos(@PathVariable("idInvestimento") Long id) {
-        investimentosService.deleteInvestimentos(id);
+    public void deleteInvestimento(@PathVariable("idInvestimento") Long idInvestimento) {
+        investimentosService.deleteById(idInvestimento);
     }
 
 }

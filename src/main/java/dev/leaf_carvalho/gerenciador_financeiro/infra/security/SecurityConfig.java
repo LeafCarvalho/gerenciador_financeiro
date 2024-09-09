@@ -1,6 +1,5 @@
 package dev.leaf_carvalho.gerenciador_financeiro.infra.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,39 +19,33 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	@SuppressWarnings("unused")
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private final SecurityFilter securityFilter;
 
-    @Autowired
-    SecurityFilter securityFilter;
+    public SecurityConfig(SecurityFilter securityFilter) {
+        this.securityFilter = securityFilter;
+    }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        return http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
-            	
-                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                .requestMatchers(HttpMethod.GET, "/recorrencias").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/usuarios/lista").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html**", "/swagger-ui/index.html**", "/v2/api-docs", "/webjars/**", "/swagger-resources/**", "/configuration/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
+                .requestMatchers(HttpMethod.GET, "/recorrencias", "/usuarios/lista").hasRole("ADMIN")
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/v2/api-docs", "/webjars/**", "/swagger-resources/**", "/configuration/**").permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(exceptionHandling -> exceptionHandling
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-					response.setCharacterEncoding("UTF-8");
-					response.getWriter().write("Acesso não autorizado");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("Acesso não autorizado");
                 })
             )
-            
-            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
     }
-
 
     @Bean
     PasswordEncoder passwordEncoder() {
