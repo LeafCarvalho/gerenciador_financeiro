@@ -24,8 +24,7 @@ public class Entradas {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long idEntrada;
+    private Long id;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -34,7 +33,7 @@ public class Entradas {
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     @JsonBackReference
     private Usuarios usuario;
 
@@ -80,11 +79,11 @@ public class Entradas {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Entradas entrada = (Entradas) o;
-        return Objects.equals(idEntrada, entrada.idEntrada);
+        return Objects.equals(id, entrada.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idEntrada);
+        return Objects.hash(id);
     }
 }

@@ -27,15 +27,14 @@ public class Investimentos {
     private Long id;
 
     @CreatedDate
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonBackReference
     private Usuarios usuario;
 
     @Column(name = "nome_investimento", nullable = false)

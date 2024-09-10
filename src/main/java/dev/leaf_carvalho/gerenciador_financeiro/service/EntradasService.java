@@ -1,6 +1,7 @@
 package dev.leaf_carvalho.gerenciador_financeiro.service;
 
 import dev.leaf_carvalho.gerenciador_financeiro.dto.EntradasDTO;
+import dev.leaf_carvalho.gerenciador_financeiro.exception.ResourceNotFoundException;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Entradas;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Usuarios;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Tipo_Recorrencia;
@@ -31,9 +32,9 @@ public class EntradasService {
                 .toList();
     }
 
-    public EntradasDTO getEntrada(Long idEntrada) {
-        Entradas entrada = entradasRepository.findById(idEntrada)
-                .orElseThrow(() -> new RuntimeException("Entrada não encontrada"));
+    public EntradasDTO getEntrada(Long id) {
+        Entradas entrada = entradasRepository.findById(id)
+        		.orElseThrow(() -> new ResourceNotFoundException("Entrada de ID " + id + " não encontrada."));
         return convertToDto(entrada);
     }
 
@@ -76,7 +77,7 @@ public class EntradasService {
     }
 
     @Transactional
-    public void deleteEntrada(Long idEntrada) {
-        entradasRepository.deleteById(idEntrada);
+    public void deleteEntrada(Long id) {
+        entradasRepository.deleteById(id);
     }
 }

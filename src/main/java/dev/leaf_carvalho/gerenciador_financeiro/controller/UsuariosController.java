@@ -4,6 +4,7 @@ import dev.leaf_carvalho.gerenciador_financeiro.model.Usuarios;
 import dev.leaf_carvalho.gerenciador_financeiro.service.UsuariosService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,5 +28,11 @@ public class UsuariosController {
         Map<String, Object> response = new HashMap<>();
         response.put("data", usuarios);
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuarios> getUsuarioPorId(@PathVariable Long id) {
+        Usuarios usuario = usuariosService.getUsuarioPorId(id);
+        return ResponseEntity.ok(usuario);
     }
 }

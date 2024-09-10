@@ -27,9 +27,9 @@ public class InvestimentosController {
         return investimentosService.getAllInvestimentosByUsuarioId(usuarioId);
     }
     
-    @GetMapping("/{idInvestimento}")
-    public ResponseEntity<InvestimentosDTO> getInvestimentoById(@PathVariable("idInvestimento") Long idInvestimento) {
-        InvestimentosDTO investimento = investimentosService.getInvestimentoById(idInvestimento);
+    @GetMapping("/{id}")
+    public ResponseEntity<InvestimentosDTO> getInvestimentoById(@PathVariable Long id) {
+        InvestimentosDTO investimento = investimentosService.getInvestimentoById(id);
         return ResponseEntity.ok(investimento);
     }
 
@@ -40,9 +40,9 @@ public class InvestimentosController {
         return ResponseEntity.status(201).body(newInvestimento);
     }
     
-    @DeleteMapping("/{idInvestimento}")
-    public void deleteInvestimento(@PathVariable("idInvestimento") Long idInvestimento) {
-        investimentosService.deleteById(idInvestimento);
+    @DeleteMapping("/{id}")
+    public void deleteInvestimento(@PathVariable Long id) {
+        investimentosService.deleteById(id);
     }
 
 }

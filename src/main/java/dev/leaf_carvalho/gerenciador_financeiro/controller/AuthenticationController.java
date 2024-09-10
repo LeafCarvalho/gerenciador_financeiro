@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.leaf_carvalho.gerenciador_financeiro.dto.LoginRequestDTO;
 import dev.leaf_carvalho.gerenciador_financeiro.dto.RegisterRequestDTO;
 import dev.leaf_carvalho.gerenciador_financeiro.dto.ResponseDTO;
+import dev.leaf_carvalho.gerenciador_financeiro.exception.UnauthorizedException;
 import dev.leaf_carvalho.gerenciador_financeiro.infra.security.TokenService;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Usuarios;
 import dev.leaf_carvalho.gerenciador_financeiro.repository.UsuariosRepository;
@@ -26,14 +27,16 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body) {
         Usuarios user = repository.findByEmail(body.email())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UnauthorizedException("Usuário não encontrado"));
 
-        if (passwordEncoder.matches(body.senha(), user.getSenha())) {
-            String token = tokenService.generateToken(user);
-            return ResponseEntity.ok(new ResponseDTO(user.getUsername(), token));
+        if (!passwordEncoder.matches(body.senha(), user.getSenha())) {
+            throw new UnauthorizedException("Email ou senha incorretos ou não autorizado.");
         }
-        return ResponseEntity.badRequest().build();
+
+        String token = tokenService.generateToken(user);
+        return ResponseEntity.ok(new ResponseDTO(user.getUsername(), token));
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequestDTO body) {

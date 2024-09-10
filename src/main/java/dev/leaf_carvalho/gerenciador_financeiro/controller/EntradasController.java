@@ -26,9 +26,9 @@ public class EntradasController {
         return entradasService.getAllEntradasByUsuarioId(usuarioId);
     }
 
-    @GetMapping("/{idEntrada}")
-    public ResponseEntity<EntradasDTO> getEntrada(@PathVariable Long idEntrada) {
-        EntradasDTO entrada = entradasService.getEntrada(idEntrada);
+    @GetMapping("/{id}")
+    public ResponseEntity<EntradasDTO> getEntrada(@PathVariable Long id) {
+        EntradasDTO entrada = entradasService.getEntrada(id);
         return ResponseEntity.ok(entrada);
     }
 
@@ -40,8 +40,8 @@ public class EntradasController {
         return ResponseEntity.status(201).body(newEntrada);
     }
 
-    @DeleteMapping("/{idEntrada}")
-    public void deleteEntrada(@PathVariable("idEntrada") Long id) {
+    @DeleteMapping("/{id}")
+    public void deleteEntrada(@PathVariable Long id) {
         entradasService.deleteEntrada(id);
     }
 }

@@ -1,6 +1,7 @@
 package dev.leaf_carvalho.gerenciador_financeiro.service;
 
 import dev.leaf_carvalho.gerenciador_financeiro.dto.SaidasDTO;
+import dev.leaf_carvalho.gerenciador_financeiro.exception.ResourceNotFoundException;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Saidas;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Tipo_Recorrencia;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Usuarios;
@@ -34,7 +35,7 @@ public class SaidasService {
 
     public SaidasDTO getById(Long id) {
         Saidas saida = saidasRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Saída não encontrada"));
+        		.orElseThrow(() -> new ResourceNotFoundException("Saída de ID " + id + " não encontrada."));
         return convertToDto(saida);
     }
 

@@ -1,6 +1,7 @@
 package dev.leaf_carvalho.gerenciador_financeiro.service;
 
 import dev.leaf_carvalho.gerenciador_financeiro.dto.InvestimentosDTO;
+import dev.leaf_carvalho.gerenciador_financeiro.exception.ResourceNotFoundException;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Investimentos;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Tipo_Recorrencia;
 import dev.leaf_carvalho.gerenciador_financeiro.model.Usuarios;
@@ -33,7 +34,7 @@ public class InvestimentosService {
 
     public InvestimentosDTO getInvestimentoById(Long id) {
         Investimentos investimento = investimentosRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Investimento não encontrado"));
+        		.orElseThrow(() -> new ResourceNotFoundException("Investimento de ID " + id + " não encontrado."));
         return convertToDto(investimento);
     }
 
