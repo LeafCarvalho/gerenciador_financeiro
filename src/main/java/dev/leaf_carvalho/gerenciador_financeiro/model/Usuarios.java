@@ -9,7 +9,9 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
@@ -21,6 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "usuarios")
 public class Usuarios {
 
@@ -30,9 +33,13 @@ public class Usuarios {
     private Long id;
 
     @CreatedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy - HH:mm")
+    @Column(name = "Data de criação",nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy - HH:mm")
+    @Column(name = "Última modificação", nullable = false)
     private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
@@ -74,9 +81,8 @@ public class Usuarios {
         return Objects.hash(id);
     }
 
-	@Override
-	public String toString() {
-		return "Usuarios [id=" + id + "]";
-	}
-    
+    @Override
+    public String toString() {
+        return "Usuarios [id=" + id + "]";
+    }
 }
