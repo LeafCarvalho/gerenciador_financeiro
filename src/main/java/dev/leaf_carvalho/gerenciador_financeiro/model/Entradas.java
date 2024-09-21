@@ -44,9 +44,6 @@ public class Entradas {
     @JsonBackReference
     private Usuarios usuario;
 
-    @Column(name = "salario", nullable = false)
-    private BigDecimal salario;
-
     @Column(name = "nome_entrada", nullable = false)
     private String nomeEntrada;
 
@@ -56,14 +53,14 @@ public class Entradas {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_recorrencia")
     private Tipo_Recorrencia tipoRecorrencia;
-
-    @Column(name = "valor_entrada", nullable = false)
-    private Double valorEntrada;
-
+    
     @Column(name = "data_entrada", nullable = false)
     private LocalDate dataEntrada;
 
-    @Column(name = "recibo_entrada", nullable = false)
+    @Column(name = "valor_entrada", nullable = false)
+    private BigDecimal valorEntrada;
+
+    @Column(name = "recibo_entrada")
     private String reciboEntrada;
 
     public void setUsuario(Usuarios usuario) {

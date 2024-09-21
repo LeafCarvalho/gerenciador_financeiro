@@ -34,9 +34,8 @@ public class AuthenticationController {
         }
 
         String token = tokenService.generateToken(user);
-        return ResponseEntity.ok(new ResponseDTO(user.getUsername(), token));
+        return ResponseEntity.ok(new ResponseDTO(user.getId(), user.getUsername(), token));
     }
-
 
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequestDTO body) {
@@ -52,6 +51,6 @@ public class AuthenticationController {
         repository.save(newUser);
 
         String token = tokenService.generateToken(newUser);
-        return ResponseEntity.ok(new ResponseDTO(newUser.getUsername(), token));
+        return ResponseEntity.ok(new ResponseDTO(newUser.getId(), newUser.getUsername(), token));
     }
 }

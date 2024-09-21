@@ -7,15 +7,18 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class EntradasDTO {
+	private Long id;
     private Long usuario_id;
-    private BigDecimal salario;
     private String nomeEntrada;
     private String tipoEntrada;
-    private Double valorEntrada;
+    private BigDecimal valorEntrada;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate dataEntrada;
     private String reciboEntrada;
     private Long idRecorrencia;

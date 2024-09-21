@@ -66,7 +66,7 @@ public class Investimentos {
     @Column(name = "data_investimento_final", nullable = false)
     private LocalDate dataInvestimentoFinal;
 
-    @Column(name = "recibo_investimento", nullable = false)
+    @Column(name = "recibo_investimento")
     private String reciboInvestimento;
 
     @Override

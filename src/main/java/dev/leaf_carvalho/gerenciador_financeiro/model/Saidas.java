@@ -62,7 +62,7 @@ public class Saidas {
     @Column(name = "data_vencimento", nullable = false)
     private LocalDate dataVencimento;
 
-    @Column(name = "recibo_saida", nullable = false)
+    @Column(name = "recibo_saida")
     private String reciboSaida;
 
 	@Override

@@ -9,6 +9,7 @@ import dev.leaf_carvalho.gerenciador_financeiro.repository.InvestimentosReposito
 import dev.leaf_carvalho.gerenciador_financeiro.repository.UsuariosRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,11 +19,16 @@ public class InvestimentosService {
     private final InvestimentosRepository investimentosRepository;
     private final UsuariosRepository usuariosRepository;
     private final RecorrenciaService recorrenciaService;
+    private final ArmazenaArquivoService armazenaArquivoService;
 
-    public InvestimentosService(InvestimentosRepository investimentosRepository, UsuariosRepository usuariosRepository, RecorrenciaService recorrenciaService) {
+    public InvestimentosService(InvestimentosRepository investimentosRepository,
+                                UsuariosRepository usuariosRepository,
+                                RecorrenciaService recorrenciaService,
+                                ArmazenaArquivoService armazenaArquivoService) {
         this.investimentosRepository = investimentosRepository;
         this.usuariosRepository = usuariosRepository;
         this.recorrenciaService = recorrenciaService;
+        this.armazenaArquivoService = armazenaArquivoService;
     }
 
     public List<InvestimentosDTO> getAllInvestimentosByUsuarioId(Long usuarioId) {
@@ -34,12 +40,12 @@ public class InvestimentosService {
 
     public InvestimentosDTO getInvestimentoById(Long id) {
         Investimentos investimento = investimentosRepository.findById(id)
-        		.orElseThrow(() -> new ResourceNotFoundException("Investimento de ID " + id + " não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Investimento de ID " + id + " não encontrado."));
         return convertToDto(investimento);
     }
 
     @Transactional
-    public InvestimentosDTO saveInvestimento(InvestimentosDTO investimentosDTO, Long usuarioId) {
+    public InvestimentosDTO saveInvestimento(InvestimentosDTO investimentosDTO, Long usuarioId, MultipartFile file) {
         Usuarios usuario = usuariosRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
@@ -56,14 +62,24 @@ public class InvestimentosService {
         investimento.setValorInvestimento(investimentosDTO.getValorInvestimento());
         investimento.setDataInvestimentoInicial(investimentosDTO.getDataInvestimentoInicial());
         investimento.setDataInvestimentoFinal(investimentosDTO.getDataInvestimentoFinal());
-        investimento.setReciboInvestimento(investimentosDTO.getReciboInvestimento());
         investimento.setTipoRecorrencia(recorrencia);
         investimento.setCategoria(investimentosDTO.getCategoria());
+
+        if (file != null && !file.isEmpty()) {
+            String contentType = file.getContentType();
+            if (!isValidContentType(contentType)) {
+                throw new RuntimeException("Tipo de arquivo não suportado");
+            }
+
+            String filePath = armazenaArquivoService.storeFile(file);
+            investimento.setReciboInvestimento(filePath);
+        } else {
+            investimento.setReciboInvestimento(null);
+        }
 
         Investimentos savedInvestimento = investimentosRepository.save(investimento);
         return convertToDto(savedInvestimento);
     }
-
 
     @Transactional
     public void deleteById(Long id) {
@@ -72,6 +88,7 @@ public class InvestimentosService {
 
     private InvestimentosDTO convertToDto(Investimentos investimento) {
         return new InvestimentosDTO(
+        		investimento.getId(),
                 investimento.getUsuario().getId(),
                 investimento.getNomeInvestimento(),
                 investimento.getTipoInvestimento(),
@@ -83,5 +100,11 @@ public class InvestimentosService {
                 investimento.getTipoRecorrencia().getIdRecorrencia(),
                 investimento.getTipoRecorrencia().getTipoRecorrencia()
         );
+    }
+
+    private boolean isValidContentType(String contentType) {
+        return contentType.equals("application/pdf") ||
+               contentType.equals("image/jpeg") ||
+               contentType.equals("image/png");
     }
 }

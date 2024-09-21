@@ -9,6 +9,7 @@ import dev.leaf_carvalho.gerenciador_financeiro.repository.SaidasRepository;
 import dev.leaf_carvalho.gerenciador_financeiro.repository.UsuariosRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,12 +19,16 @@ public class SaidasService {
     private final SaidasRepository saidasRepository;
     private final UsuariosRepository usuariosRepository;
     private final RecorrenciaService recorrenciaService;
+    private final ArmazenaArquivoService armazenaArquivoService;
 
-
-    public SaidasService(SaidasRepository saidasRepository, UsuariosRepository usuariosRepository, RecorrenciaService recorrenciaService) {
+    public SaidasService(SaidasRepository saidasRepository,
+                         UsuariosRepository usuariosRepository,
+                         RecorrenciaService recorrenciaService,
+                         ArmazenaArquivoService armazenaArquivoService) {
         this.saidasRepository = saidasRepository;
         this.usuariosRepository = usuariosRepository;
         this.recorrenciaService = recorrenciaService;
+        this.armazenaArquivoService = armazenaArquivoService;
     }
 
     public List<SaidasDTO> getAllSaidasByUsuarioId(Long usuarioId) {
@@ -35,14 +40,14 @@ public class SaidasService {
 
     public SaidasDTO getById(Long id) {
         Saidas saida = saidasRepository.findById(id)
-        		.orElseThrow(() -> new ResourceNotFoundException("Saída de ID " + id + " não encontrada."));
+                .orElseThrow(() -> new ResourceNotFoundException("Saída de ID " + id + " não encontrada."));
         return convertToDto(saida);
     }
 
     @Transactional
-    public SaidasDTO saveSaida(SaidasDTO saidaDTO, Long usuarioId) {
+    public SaidasDTO saveSaida(SaidasDTO saidaDTO, Long usuarioId, MultipartFile file) {
         Usuarios usuario = usuariosRepository.findById(usuarioId)
-            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         Tipo_Recorrencia recorrencia = recorrenciaService.getRecorrenciaById(saidaDTO.getIdRecorrencia());
 
@@ -54,12 +59,22 @@ public class SaidasService {
         saida.setValorSaida(saidaDTO.getValorSaida());
         saida.setCategoria(saidaDTO.getCategoria());
         saida.setDataVencimento(saidaDTO.getDataVencimento());
-        saida.setReciboSaida(saidaDTO.getReciboSaida());
+
+        if (file != null && !file.isEmpty()) {
+            String contentType = file.getContentType();
+            if (!isValidContentType(contentType)) {
+                throw new RuntimeException("Tipo de arquivo não suportado");
+            }
+
+            String filePath = armazenaArquivoService.storeFile(file);
+            saida.setReciboSaida(filePath);
+        } else {
+            saida.setReciboSaida(null);
+        }
 
         Saidas savedSaida = saidasRepository.save(saida);
         return convertToDto(savedSaida);
     }
-
 
     @Transactional
     public void deleteById(Long id) {
@@ -68,16 +83,22 @@ public class SaidasService {
 
     private SaidasDTO convertToDto(Saidas saida) {
         return new SaidasDTO(
-            saida.getUsuario().getId(),
-            saida.getNomeSaida(),
-            saida.getTipoSaida(),
-            saida.getValorSaida(),
-            saida.getCategoria(),
-            saida.getDataVencimento(),
-            saida.getReciboSaida(),
-            saida.getTipoRecorrencia().getIdRecorrencia(),
-            saida.getTipoRecorrencia().getTipoRecorrencia()
+        		saida.getId(),
+                saida.getUsuario().getId(),
+                saida.getNomeSaida(),
+                saida.getTipoSaida(),
+                saida.getValorSaida(),
+                saida.getCategoria(),
+                saida.getDataVencimento(),
+                saida.getReciboSaida(),
+                saida.getTipoRecorrencia().getIdRecorrencia(),
+                saida.getTipoRecorrencia().getTipoRecorrencia()
         );
     }
 
+    private boolean isValidContentType(String contentType) {
+        return contentType.equals("application/pdf") ||
+               contentType.equals("image/jpeg") ||
+               contentType.equals("image/png");
+    }
 }
